@@ -1,9 +1,35 @@
-.DS_Store
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# MLflow artifacts
+mlruns/
+mlflow.db
+
+# Data files
 data/raw/*
 data/processed/*
-models/*.pkl
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+
+# Models
+models/*.pkl
 !models/.gitkeep
+
+# Logs
+pipeline.log
+*.log
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
