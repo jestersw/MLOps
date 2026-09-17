@@ -71,7 +71,7 @@ You can run the pipeline stages manually to verify each component:
 4. Stage 3: Deployment (builds and starts Docker containers):
    ```
    cd code/deployment
-   docker compose up -
+   docker compose up --build
       ```
    
 ## Automated Execution
