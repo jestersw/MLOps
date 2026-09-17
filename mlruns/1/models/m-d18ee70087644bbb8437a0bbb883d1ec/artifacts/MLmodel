@@ -1,0 +1,24 @@
+artifact_path: /Users/jester/Desktop/MLOps/mlruns/1/models/m-d18ee70087644bbb8437a0bbb883d1ec/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.skops
+    predict_fn: predict
+    python_version: 3.13.11
+  sklearn:
+    code: null
+    pickled_model: model.skops
+    serialization_format: skops
+    sklearn_version: 1.8.0
+    skops_trusted_types:
+    - sklearn.tree._tree.Tree
+mlflow_version: 3.16.1
+model_id: m-d18ee70087644bbb8437a0bbb883d1ec
+model_size_bytes: 1825680
+model_uuid: m-d18ee70087644bbb8437a0bbb883d1ec
+prompts: null
+run_id: c4bb15e808f44839a8ce28fd050b0dd6
+utc_time_created: '2026-09-17 10:30:49.418553'
