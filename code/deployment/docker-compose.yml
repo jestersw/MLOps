@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  api:
+    build: ./api
+    container_name: wine_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../../models:/app/models  # Mount trained model into container
+    networks:
+      - mlops_net
+
+  app:
+    build: ./app
+    container_name: wine_app
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+    networks:
+      - mlops_net
+
+networks:
+  mlops_net:
+    driver: bridge
