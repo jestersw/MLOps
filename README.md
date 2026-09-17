@@ -22,7 +22,7 @@ The repository follows the recommended logical hierarchy:
 ├── models                           # Contains trained model.pkl and scaler.pkl
 ├── services
 │   └── airflow
-│       └── dags                     # Alternative orchestration method (if used)
+│       └── dags                     # Alternative orchestration method (Airflow DAG)
 ├── run_pipeline.sh                  # Automation script for cron job
 ├── setup_data.py                    # Initial data generation script
 └── requirements.txt                 # Python dependencies
@@ -30,75 +30,96 @@ The repository follows the recommended logical hierarchy:
 
 ## Prerequisites
 
-Python 3.9 or higher
-Docker and Docker Compose
-macOS or Linux (for cron job automation)
-Setup and Installation
+- Python 3.9 or higher
+- Docker and Docker Compose
+- macOS or Linux (for cron job automation)
+
+## Setup and Installation
 
 1. Clone the repository:
-```
+   ```bash
    git clone https://github.com/jestersw/MLOps.git
    cd MLOps
-```
+   ```
 
 2. Create and activate a virtual environment:
-   ```
+   ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows, use: venv\Scripts\activate
    ```
+
 3. Install the required dependencies:
-      ```
+   ```bash
    pip install -r requirements.txt
    ```
+
 ## Pipeline Execution
+
 ### Manual Execution
 
 You can run the pipeline stages manually to verify each component:
+
 1. Generate the raw dataset:
-   ```
+   ```bash
    python setup_data.py
-      ```
-   
+   ```
+
 2. Stage 1: Data Engineering (cleans data, handles outliers, splits into train/test):
-   ```
+   ```bash
    python code/datasets/process_data.py
-      ```
-   
+   ```
+
 3. Stage 2: Model Engineering (trains Random Forest, logs to MLflow, saves artifacts):
-   ```
+   ```bash
    python code/models/train_model.py
-      ```
-4. Stage 3: Deployment (builds and starts Docker containers):
    ```
+
+4. Stage 3: Deployment (builds and starts Docker containers):
+   ```bash
    cd code/deployment
    docker compose up --build
-      ```
-   
-## Automated Execution
+   ```
+
+### Automated Execution
 
 The complete pipeline is configured to run automatically every 5 minutes using a cron job.
-- The automation script is located at run_pipeline.sh.
-- To verify the schedule is active on your system, run: crontab -l
-- Logs of the automated runs are appended to pipeline.log in the root directory.
-  
+
+- The automation script is `run_pipeline.sh`. It runs all stages (data generation, Stage 1, Stage 2) and then rebuilds and restarts the Docker containers for Stage 3.
+- Make the script executable once:
+  ```bash
+  chmod +x run_pipeline.sh
+  ```
+- Register the cron job with `crontab -e` and add the following line (use the absolute path to your clone):
+  ```
+  */5 * * * * /absolute/path/to/MLOps/run_pipeline.sh >> /absolute/path/to/MLOps/pipeline.log 2>&1
+  ```
+  > Note: cron does not activate your virtualenv. If you use one, export its interpreter, e.g. run the script with `PY=/absolute/path/to/MLOps/venv/bin/python`, or set `PY` inside `run_pipeline.sh`.
+- To verify the schedule is active, run:
+  ```bash
+  crontab -l
+  ```
+- Logs of the automated runs are appended to `pipeline.log` in the root directory.
+
 ## Accessing the Application
 
 Once the deployment stage is running, you can access the services at the following local addresses:
-- Streamlit Web Application: http://localhost:8501 (Enter chemical features and click "Predict" to see the model output)
-- FastAPI Interactive Documentation: http://localhost:8000/docs (Test the /predict endpoint directly via the Swagger UI)
+
+- Streamlit Web Application: http://localhost:8501 (enter chemical features and click "Predict" to see the model output)
+- FastAPI Interactive Documentation: http://localhost:8000/docs (test the `/predict` endpoint directly via the Swagger UI)
 
 ## Grading Criteria Checklist
 
-- Data engineering stage is implemented and working (code/datasets/process_data.py).
-- Model engineering stage is implemented and working (code/models/train_model.py with MLflow logging).
-- Deployment stage is implemented and working: the model API and web application run in separate Docker containers, and the application displays predictions obtained from the API.
-- The complete pipeline is automated and runs on the required schedule (via run_pipeline.sh and crontab).
-- The repository is structured with a logical hierarchy of files and folders.
+- [x] Data engineering stage is implemented and working (`code/datasets/process_data.py`).
+- [x] Model engineering stage is implemented and working (`code/models/train_model.py` with MLflow logging).
+- [x] Deployment stage is implemented and working: the model API and web application run in separate Docker containers, and the application displays predictions obtained from the API.
+- [x] The complete pipeline is automated and runs on the required schedule (via `run_pipeline.sh` and crontab).
+- [x] The repository is structured with a logical hierarchy of files and folders.
 
 ## Cleanup
 
 To stop the running Docker containers and free up system resources, run:
-```
-cd code/deploymentdocker 
-compose down
+
+```bash
+cd code/deployment
+docker compose down
 ```

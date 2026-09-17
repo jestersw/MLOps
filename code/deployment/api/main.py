@@ -28,7 +28,7 @@ class WineFeatures(BaseModel):
 @app.post("/predict")
 def predict(features: WineFeatures):
     try:
-        input_data = np.array([[getattr(features, f) for f in features.__fields__]])
+        input_data = np.array([[getattr(features, f) for f in WineFeatures.model_fields]])
         scaled_data = scaler.transform(input_data)
         prediction = model.predict(scaled_data)[0]
         return {"prediction": int(prediction)}

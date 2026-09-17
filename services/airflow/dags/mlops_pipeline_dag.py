@@ -21,6 +21,12 @@ dag = DAG(
     catchup=False,
 )
 
+t0 = BashOperator(
+    task_id='setup_data',
+    bash_command=f'cd {REPO_DIR} && python setup_data.py',
+    dag=dag,
+)
+
 t1 = BashOperator(
     task_id='data_engineering',
     bash_command=f'cd {REPO_DIR} && python code/datasets/process_data.py',
@@ -39,4 +45,4 @@ t3 = BashOperator(
     dag=dag,
 )
 
-t1 >> t2 >> t3
+t0 >> t1 >> t2 >> t3
